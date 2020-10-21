@@ -1,14 +1,45 @@
 <!DOCTYPE HTML>
 <html>
+    <head>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+    </head>
+<style>
 
+#issMap { height: 800px; }
+
+</style>
 
 <body>
 <h1>Where is the ISS?</h1>
 <p>latitude: <span id="lat"></span><br /><p></p>
 <p>longitude: <span id="long"></span><br /><p></p>
+<div id="issMap"></div>
 </body>
 
 <script>
+const mymap = L.map('issMap').setView([0, 0], 1);
+
+var issIcon = L.icon({
+    iconUrl: 'International_Space_Station.svg.png',
+    iconSize: [50, 32],
+    iconAnchor: [25, 16],
+    popupAnchor: [-3, -76],
+    //shadowUrl: 'International_Space_Station.svg.png',
+});
+
+
+const marker =   L.marker([0,0],{icon:issIcon}).addTo(mymap);
+const attribution = 
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+const tiles = L.tileLayer(tileUrl,{attribution});
+tiles.addTo(mymap);    
 
     api_url="https://api.wheretheiss.at/v1/satellites/25544";
     
@@ -17,6 +48,8 @@
         const data = await response.json();
         const {latitude,longitude}=data;
 
+        marker.setLatLng([latitude,longitude]);
+        //L.marker([50.505, 30.57], {icon: issIcon}).addTo(mymap);
         document.getElementById('lat').textContent=latitude;
         document.getElementById('long').textContent=longitude;
 
@@ -27,7 +60,5 @@
 
 
 </script>
-</script>
-
 
 </html>
